@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
-    "build-only": "vite build",
+    "build-only": "tsx vite.build.ts",
     "type-check": "vue-tsc --build",
     "format": "prettier --write src/"
   },
@@ -32,8 +32,10 @@
     "@vue/tsconfig": "^0.7.0",
     "npm-run-all2": "^8.0.4",
     "prettier": "3.5.3",
+    "tsx": "^4.20.3",
     "typescript": "~5.8.0",
     "vite": "^7.0.0",
+    "vite-plugin-singlefile": "^2.3.0",
     "vite-plugin-vue-devtools": "^7.7.7",
     "vue-tsc": "^2.2.10"
   }

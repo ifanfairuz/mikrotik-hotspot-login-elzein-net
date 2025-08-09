@@ -1,38 +1,32 @@
-import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
+import { defineConfig, UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 import mikrotik from './src/lib/mikrotik-plugin'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 
-// dirname
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [vue(), vueJsx(), tailwindcss(), vueDevTools(), mikrotik()],
+export const config: UserConfig = {
+  plugins: [vue(), vueJsx(), tailwindcss(), vueDevTools(), mikrotik(), viteSingleFile()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   build: {
+    emptyOutDir: false,
     rollupOptions: {
-      output: {
-        esModule: false,
-        preserveModules: false,
-      },
       input: {
-        login: resolve(__dirname, 'login.html'),
-        alogin: resolve(__dirname, 'alogin.html'),
-        status: resolve(__dirname, 'status.html'),
-        logout: resolve(__dirname, 'logout.html'),
-        error: resolve(__dirname, 'error.html'),
-        redirect: resolve(__dirname, 'redirect.html'),
+        alogin: fileURLToPath(new URL('./alogin.html', import.meta.url)),
+        login: fileURLToPath(new URL('./login.html', import.meta.url)),
+        logout: fileURLToPath(new URL('./logout.html', import.meta.url)),
+        status: fileURLToPath(new URL('./status.html', import.meta.url)),
+        error: fileURLToPath(new URL('./error.html', import.meta.url)),
+        redirect: fileURLToPath(new URL('./redirect.html', import.meta.url)),
       },
     },
   },
-})
+}
+
+export default defineConfig(config)
