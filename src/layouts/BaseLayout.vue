@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import BgParticle from '@/components/BgParticle.vue'
+import { cn } from '@/lib/utils'
 import { useColorMode } from '@vueuse/core'
 import { onBeforeMount } from 'vue'
 
@@ -11,7 +13,13 @@ onBeforeMount(() => {
 })
 </script>
 <template>
-  <div :class="mode == 'dark' ? 'dark' : ''">
-    <slot />
+  <div :class="cn(mode == 'dark' ? 'dark' : '', 'relative')">
+    <BgParticle
+      :color="mode == 'dark' ? '#fb2c36' : '#000000'"
+      :line-linked-opacity="mode == 'dark' ? 0.5 : 0.2"
+    />
+    <div class="relative z-20">
+      <slot />
+    </div>
   </div>
 </template>
