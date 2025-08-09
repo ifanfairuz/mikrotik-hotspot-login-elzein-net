@@ -3,58 +3,10 @@ import CenterBox from '@/components/CenterBox.vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import FullPageLayout from '@/layouts/FullPageLayout.vue'
-import { onMounted, ref } from 'vue'
+import { useParams, useStatusData, type StatusParams } from '@/lib/mikrotik'
 
-interface Param {
-  'link-logout'?: string
-  'link-login-only'?: string
-  'link-orig-esc'?: string
-  username?: string
-  session_time_left?: string
-  bytes_in_nice?: string
-  bytes_out_nice?: string
-  uptime?: string
-  mac?: string
-  ip?: string
-  login_by?: string
-  advert_pending?: string
-  advert_pending_reason?: string
-  advert_pending_time?: string
-  error?: string
-}
-
-const params = ref<Param>({})
-
-const datas = ref([
-  {
-    label: 'IP address',
-    value: params.value.ip,
-  },
-  {
-    label: 'MAC address',
-    value: params.value.mac,
-  },
-  {
-    label: 'Sent',
-    value: params.value.bytes_in_nice,
-  },
-  {
-    label: 'Received',
-    value: params.value.bytes_out_nice,
-  },
-  {
-    label: 'Online',
-    value: params.value.uptime,
-  },
-  {
-    label: 'Sisa Online',
-    value: params.value.session_time_left,
-  },
-])
-
-onMounted(() => {
-  params.value = JSON.parse(document.getElementById('params')?.innerHTML || '{}')
-})
+const params = useParams<StatusParams>()
+const datas = useStatusData(params)
 </script>
 
 <template>
@@ -72,7 +24,7 @@ onMounted(() => {
               >
                 <dt class="font-medium">{{ data.label }}</dt>
 
-                <dd class="sm:col-span-2">{{ data.value }}</dd>
+                <dd class="sm:col-span-2">{{ data.value || '-' }}</dd>
               </div>
             </dl>
           </div>

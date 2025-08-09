@@ -6,13 +6,14 @@ import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+import mikrotik from './src/lib/mikrotik-plugin'
 
 // dirname
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx(), tailwindcss(), vueDevTools()],
+  plugins: [vue(), vueJsx(), tailwindcss(), vueDevTools(), mikrotik()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -20,6 +21,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      output: {
+        esModule: false,
+        preserveModules: false,
+      },
       input: {
         login: resolve(__dirname, 'login.html'),
         alogin: resolve(__dirname, 'alogin.html'),

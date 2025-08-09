@@ -4,37 +4,35 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import FullPageLayout from '@/layouts/FullPageLayout.vue'
-import { hexMD5 } from '@/lib/md5-module'
-import { onMounted, ref } from 'vue'
+import { useLoginParams } from '@/lib/mikrotik'
+import { computed, ref } from 'vue'
 
-interface Param {
-  'link-login-only': string
-  'link-orig-esc': string
-  'chap-id'?: string
-  'chap-challenge'?: string
-  error?: string
-  username?: string
-}
-
-const params = ref<Param>({
-  'link-login-only': location.href.split('?')[0],
-  'link-orig-esc': '',
-})
+const params = useLoginParams()
 const username = ref('')
-const login_username = ref('')
-const login_password = ref('')
+const error = ref<string | null>()
+const display_error = computed(() => params.value.error ?? error.value)
+const loading = ref(false)
 const login_form = ref<HTMLFormElement>()
+const login_username = ref<HTMLInputElement>()
+const login_password = ref<HTMLInputElement>()
+const login_dst = ref<HTMLInputElement>()
 
-const submit = (value: string) => {
-  if (!params.value?.['chap-id']) {
+const submit = async (value: string) => {
+  if (!login_form.value || !login_username.value || !login_password.value || !login_dst.value) {
     return
   }
 
-  login_username.value = value.trim().toUpperCase()
-  login_password.value = hexMD5(
-    String(params.value['chap-id']) + username.value + String(params.value['chap-challenge']),
-  )
-  login_form.value?.submit()
+  if (!params.value?.['chap-id'] || !params.value['link-login-only']) {
+    return
+  }
+
+  loading.value = true
+  login_username.value.value = value.trim().toUpperCase()
+  login_password.value.value = login_username.value.value
+  login_dst.value.value = params.value['link-orig-esc'] ?? ''
+  login_form.value.action = params.value['link-login-only']
+
+  login_form.value.submit()
 }
 
 const onSubmit = () => {
@@ -45,46 +43,30 @@ const onSubmit = () => {
 
   submit(username.value)
 }
-
-onMounted(() => {
-  params.value = JSON.parse(document.getElementById('params')?.innerHTML || '{}')
-})
 </script>
 
 <template>
   <FullPageLayout>
     <CenterBox class="w-sm">
-      <form
-        v-if="params['chap-id']"
-        ref="login_form"
-        :action="params['link-login-only']"
-        method="post"
-        class="hidden"
-      >
-        <input type="hidden" name="username" />
-        <input type="hidden" name="password" />
+      <form action="" name="sendin" id="login" ref="login_form" method="post" class="hidden">
+        <input type="hidden" name="username" ref="login_username" />
+        <input type="hidden" name="password" ref="login_password" />
         <input type="hidden" name="popup" value="true" />
-        <input type="hidden" name="dst" :value="params['link-orig-esc']" />
+        <input type="hidden" name="dst" ref="login_dst" />
       </form>
       <form @submit.prevent="onSubmit">
         <Card>
           <CardContent class="space-y-4">
             <h1 class="text-xl text-center mb-8">Login Hotspot</h1>
-            <p v-if="params.error" class="text-red-500">{{ params.error }}</p>
-            <Input id="username" type="text" placeholder="Username" v-model="username" />
-            <Button type="submit" class="w-full"> Login </Button>
-            <!-- <div class="flex gap-2 items-center text-muted-foreground">
-              <hr class="flex-1" />
-              <span>atau</span>
-              <hr class="flex-1" />
-            </div>
-            <Button type="button" class="w-full" variant="secondary" @click="onRonda">
-              Login untuk Ronda
-            </Button>
-            <p class="text-sm text-muted-foreground">
-              <i>NB:</i> User <strong>ronda</strong> hanya aktif di jam <strong>21:00</strong> WIB
-              s/d <strong>03:00</strong> WIB
-            </p> -->
+            <p v-if="display_error" class="text-red-500">{{ display_error }}</p>
+            <Input
+              :disabled="loading"
+              id="username"
+              type="text"
+              placeholder="Username"
+              v-model="username"
+            />
+            <Button :disabled="loading" type="submit" class="w-full"> Login </Button>
           </CardContent>
         </Card>
       </form>
