@@ -1,33 +1,22 @@
-# hotspot-elzein.net
+# Elzein Net Mikrotik Hotspot Login
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a mikrotik hotspot login page for Elzein Net.
 
-## Recommended IDE Setup
+## Development
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-bun install
+```bash
+npm install
+npm run dev
 ```
 
-### Compile and Hot-Reload for Development
+## Build
 
-```sh
-bun dev
+```bash
+npm run build
 ```
 
-### Type-Check, Compile and Minify for Production
+## Upload to Mikrotik
 
-```sh
-bun run build
-```
+1. Login to Mikrotik
+2. Files
+3. Upload `dist` folder to hotspot folder
